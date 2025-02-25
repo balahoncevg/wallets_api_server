@@ -7,11 +7,6 @@ from rest_framework.response import Response
 from .models import Wallet
 from .serializers import ChangeBalanceSerializer, WalletSerializer
 
-'''def retrieve(self, request, pk=None):
-    wallet = get_object_or_404(Wallet, pk=pk)
-    return Response(
-        WalletSerializer(wallet).data
-    )'''
 
 class WalletViewSet(viewsets.ModelViewSet):
     queryset = Wallet.objects.all()
@@ -19,7 +14,9 @@ class WalletViewSet(viewsets.ModelViewSet):
     serializer_class = WalletSerializer
 
     @action(
-        detail=False, methods = ['post']
+        detail=True, methods = ['post',],
+        url_path='operation',
+        url_name='operation',
     )
     def operation(self, request, pk=None):
         get_object_or_404(Wallet, pk=pk)
