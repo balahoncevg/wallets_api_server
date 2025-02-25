@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import WalletViewSet
 
 
-app_name='wallets'
+app_name='api'
 
 api_v1 = DefaultRouter()
 api_v1.register(

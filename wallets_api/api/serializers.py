@@ -1,12 +1,10 @@
-from decimal import Decimal
-
 from rest_framework import serializers
 
 from .constants import (
     BALANCE_LENGTH, CHANGE_CHOICES,
     DECIMAL_LENGTH, MIN_CHANGE
 )
-from .models import Wallet
+from wallets.models import Wallet
 
 
 class WalletSerializer(serializers.ModelSerializer):
