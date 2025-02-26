@@ -71,3 +71,77 @@ class WalletAPITestCase(APITestCase):
             response.status_code, status.HTTP_403_FORBIDDEN,
             'Код ответа при привышении лимита снятия должен быть 403!'
         )
+    
+    def test_invalid_operation_type(self):
+        """Тест на тип операции."""
+        response = self.client.post(
+            self.operation_url,
+            data={'operationType': 'ADD', 'amount': 1000},
+            format='json'
+        )
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            ('Поле "operationType" должно принимать только '
+             'значения "DEPOSIT" и "WITHDRAW"!')
+        )
+    
+    def test_negative_amount_operation(self):
+        """Тест на попытку операции с отрицательным числом."""
+        response = self.client.post(
+            self.operation_url,
+            data={'operationType': 'DEPOSIT', 'amount': -1000},
+            format='json'
+        )
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            'Значение поля "" должно быть положительным числом!'
+        )
+    
+    def test_operation_amount_type(self):
+        """Тест на тип данных для поля 'operationType'."""
+        response = self.client.post(
+            self.operation_url,
+            data={'operationType': 'WITHDRAW', 'amount': 'word'},
+            format='json'
+        )
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            'Значение поля "amount" должно быть положительным числом!'
+        )
+    
+    def test_no_operation_type(self):
+        """Тест на отсутствие поля 'operationType'."""
+        response = self.client.post(
+            self.operation_url,
+             data={'amount': 'word'},
+            format='json'
+        )
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            'Поле "operationType" должно быть обязательным!'
+        )
+    
+    def test_no_operation_type(self):
+        """Тест на отсутствие поля 'amount'."""
+        response = self.client.post(
+            self.operation_url,
+             data={'operationType': 'WITHDRAW'},
+            format='json'
+        )
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            'Поле "amount" должно быть обязательным!'
+        )
+    
+    def test_empty_operation(self):
+        """Тест на пустой запрос для изменения баланса."""
+        response = self.client.post(
+            self.operation_url,
+             data={},
+            format='json'
+        )
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            'Поля "operationType" и "amount" должны быть обязательными!'
+        )
+

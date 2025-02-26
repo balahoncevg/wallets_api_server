@@ -23,7 +23,7 @@ class WalletViewSet(viewsets.ModelViewSet):
         serializer = ChangeBalanceSerializer(
             data=request.data
         )
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             data = serializer.validated_data
             with transaction.atomic():
                 wallet = Wallet.objects.select_for_update().get(pk=pk)
