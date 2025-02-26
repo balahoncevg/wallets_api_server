@@ -15,7 +15,7 @@ class WalletAPITestCase(APITestCase):
         self.operation_url =  f'/api/v1/wallets/{wallet_id}/operation'
     
     def test_get_balance(self):
-        """Тест на получение информации о балансе"""
+        """Тест на получение информации о балансе."""
         response = self.client.get(
             self.wallet_info_url, format='json'
         )
@@ -29,6 +29,7 @@ class WalletAPITestCase(APITestCase):
         )
     
     def test_deposit_operation(self):
+        """Тест на пополнение кошелька."""
         response = self.client.post(
             self.operation_url,
             data={'operationType': 'DEPOSIT', 'amount': 1000},
@@ -44,6 +45,7 @@ class WalletAPITestCase(APITestCase):
         )
     
     def test_withdraw_operation(self):
+        """Тест на списание с кошелька."""
         response = self.client.post(
             self.operation_url,
             data={'operationType': 'WITHDRAW', 'amount': 500},
@@ -59,6 +61,7 @@ class WalletAPITestCase(APITestCase):
         )
     
     def test_below_limit_withdraw_operation(self):
+        """Тест на списание сверх имеющихся средств."""
         response = self.client.post(
             self.operation_url,
             data={'operationType': 'WITHDRAW', 'amount': 11000},
