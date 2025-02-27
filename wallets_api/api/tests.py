@@ -13,6 +13,7 @@ class WalletAPITestCase(APITestCase):
         wallet_id = self.wallet.id
         self.wallet_info_url = f'/api/v1/wallets/{wallet_id}'
         self.operation_url =  f'/api/v1/wallets/{wallet_id}/operation'
+        self.wrong_id_url = f'/api/v1/wallets/{reversed(str(wallet_id))}'
     
     def test_get_balance(self):
         """Тест на получение информации о балансе."""
@@ -26,6 +27,17 @@ class WalletAPITestCase(APITestCase):
         self.assertEqual(
             response.data['balance'], '10000.00',
             'Значение "balance" должно быть соответствовать заданому!'
+        )
+    
+    def test_get_wrong_wallet(self):
+        """Тест получения баланса несуществующего кошелька."""
+        response = self.client.get(
+            self.wrong_id_url,
+            format='json'
+        )
+        self.assertEqual(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            'При обращении к несуществующему кошельку долже быть ответ 404!'
         )
     
     def test_deposit_operation(self):
@@ -113,7 +125,7 @@ class WalletAPITestCase(APITestCase):
         """Тест на отсутствие поля 'operationType'."""
         response = self.client.post(
             self.operation_url,
-             data={'amount': 'word'},
+            data={'amount': 'word'},
             format='json'
         )
         self.assertEqual(
@@ -125,7 +137,7 @@ class WalletAPITestCase(APITestCase):
         """Тест на отсутствие поля 'amount'."""
         response = self.client.post(
             self.operation_url,
-             data={'operationType': 'WITHDRAW'},
+            data={'operationType': 'WITHDRAW'},
             format='json'
         )
         self.assertEqual(
@@ -145,3 +157,14 @@ class WalletAPITestCase(APITestCase):
             'Поля "operationType" и "amount" должны быть обязательными!'
         )
 
+    def test_wrong_wallet_operation(self):
+        """Тест изменения баланса несуществующего кошелька."""
+        response = self.client.get(
+            str.join(self.wrong_id_url, '/operation'),
+            data={'operationType': 'DEPOSIT', 'amount': 1000},
+            format='json'
+        )
+        self.assertEqual(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            'При пополнении несуществующего кошелька долже быть ответ 404!'
+        )
