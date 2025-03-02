@@ -8,12 +8,14 @@ from wallets.models import Wallet
 
 
 class WalletSerializer(serializers.ModelSerializer):
+    """Сериализатор кошелька."""
     class Meta:
         model = Wallet
         fields = ['id', 'balance']
 
 
 class ChangeBalanceSerializer(serializers.Serializer):
+    """Сериализатор для изменения баланса кошелька."""
     operationType =serializers.ChoiceField(
         choices=CHANGE_CHOICES
     )

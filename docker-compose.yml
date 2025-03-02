@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: me
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U me -d mydatabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  wallets_api:
+    build: ./wallets_api/
+    container_name: wallets_api
+    working_dir: /app
+
+    volumes:
+      - .:/wallets_api:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+
+volumes:
+  postgres_data:
