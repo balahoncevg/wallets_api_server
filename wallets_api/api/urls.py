@@ -8,7 +8,7 @@ app_name='api'
 
 
 class NoTrailingSlashRouter(DefaultRouter):
-    """Устанавливаем обращение без слеша на конце."""
+    """Устанавливаем обращение без слэша на конце."""
     def __init__(self):
         super().__init__()
         self.trailing_slash = ''

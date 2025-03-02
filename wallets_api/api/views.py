@@ -9,6 +9,7 @@ from .serializers import ChangeBalanceSerializer, WalletSerializer
 
 
 class WalletViewSet(viewsets.ModelViewSet):
+    """Вюсет кошелька."""
     queryset = Wallet.objects.all()
     http_method_names = ['get', 'post', 'delete']
     serializer_class = WalletSerializer
@@ -19,6 +20,7 @@ class WalletViewSet(viewsets.ModelViewSet):
         url_name='operation',
     )
     def operation(self, request, pk=None):
+        """Пополнение и снятие со счета."""
         get_object_or_404(Wallet, pk=pk)
         serializer = ChangeBalanceSerializer(
             data=request.data
